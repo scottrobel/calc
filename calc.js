@@ -1,40 +1,62 @@
 let allButtons = document.querySelectorAll('.row > button');
 let display = document.querySelector('#display');
-let firstNum,secondNum
-let oporator;
+let firstNum = null,secondNum = null;
+let operator = null;
 let arrayOfAllButtons = Array.from(allButtons);
 let indexOfAllOperators;
 let currentOperation = "";
+let operatorList = ["+","-","/","x"];
+let roundNumber = (unRoundedNumber) => Math.round(unRoundedNumber*1000)/1000;
 arrayOfAllButtons.forEach((button) =>{
     let buttonText = button.innerHTML;
-    button.setAttribute('id',buttonText);
-    if(button.classList[1] === 'operator')
+    
+    
+    if(button.classList[1] === 'oporator')
     {
-        
+    
         button.addEventListener('click',()=>
         {
-            console.log(operator);
             
+            if(operatorList.indexOf(currentOperation.charAt(currentOperation.length-1)) == -1 && display.value != 'divide by 0')
+            {
             
+            console.log('g'+ button.classList[1]+'g');
+            
+                if(firstNum!=null)
+                {
                     let secondNum = currentOperation.slice(currentOperation.indexOf(operator)+1);
                     console.log('2nd' + secondNum);
                     firstNum = operate(operator,firstNum,secondNum);
+                   
+                  
+                   
                     currentOperation = firstNum;
                     console.log("fuuu" +secondNum);
+                    display.value = firstNum;
                     
-                
+                }
+            
             display.value += buttonText;
             currentOperation +=buttonText;
             operator = button.innerHTML;
             console.log(button.classList[1]);
             firstNum = parseInt(currentOperation.slice(0,currentOperation.indexOf(operator)));
-        
+            }
+            
         })
         
     }if((button.classList)[1] === 'number')
     {
         button.addEventListener('click',()=>
         {
+        if(display.value == 'divide by 0')
+        {
+            display.value = '';
+            currentOperation = '';
+            firstNum = null;
+            secondNum = null;
+            operator = null;
+        }
         display.value += buttonText;
         currentOperation +=buttonText;
         })
@@ -45,11 +67,9 @@ arrayOfAllButtons.forEach((button) =>{
             let displayValue = display.value;
             let indexOfOperator = getOpporatorIndexValue();
             secondNum = currentOperation.slice(currentOperation.indexOf(operator)+1);
-            if(operator == '/'&&secondNum == '0')
+            if(secondNum!='')
             {
-                display.value = 'fuck outa here';
-            }else if(secondNum!='')
-            {
+            
             display.value = operate(operator,firstNum,secondNum);
             console.log("f " +firstNum);
             console.log("s \'"+ secondNum + "\'");
@@ -105,6 +125,7 @@ function multiply(numberOne,numberTwo)
 function divide(numberOne,numberTwo)
 {
     return numberOne / numberTwo;
+    
 }
 function operate(operator,numOne,numTwo)
 {
@@ -112,20 +133,25 @@ function operate(operator,numOne,numTwo)
     switch(operator)
     {
         case "+":
-            returnValue= add(numOne,numTwo);
+            return returnValue = roundNumber(add(numOne,numTwo));
         break;
         case "-":
-            returnValue= subtract(numOne,numTwo);
+            return returnValue = roundNumber(subtract(numOne,numTwo));
         break;
         case "x":                    
-            returnValue = multiply(numOne,numTwo);
+            return roundNumber(multiply(numOne,numTwo));
         break;
         case '/':
-            returnValue = divide(numOne,numTwo);
+            if(operator == '/' && numTwo == '0')
+            {
+                return 'divide by 0';
+                
+            }
+            return roundNumber(divide(numOne,numTwo));
         break;
         default:
             console.log('Something Went Wrong');
         return 'Something Went Wrong';
     }
-    return Math.round(returnValue*1000)/1000;
+    
 }
